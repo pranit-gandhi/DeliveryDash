@@ -26,3 +26,8 @@ Thumbs.db
 # Local test builds
 /WebBuild/
 /Captures/
+
+# Local agent configuration and Blender backup files
+/.codex/
+*.blend1
+*.blend2

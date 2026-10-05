@@ -87,6 +87,11 @@ namespace DeliveryDash
             transform.rotation = Quaternion.LookRotation(lookPoint - transform.position, Vector3.up);
         }
 
+        public void ShiftWorld(Vector3 delta)
+        {
+            transform.position -= delta;
+        }
+
         private void OnValidate()
         {
             if (view == null) view = GetComponent<Camera>();
@@ -94,6 +99,5 @@ namespace DeliveryDash
         }
     }
 }
-
 
 

@@ -204,6 +204,24 @@ namespace DeliveryDash
             hasSample = true;
         }
 
+        public void SetPizzaRestRotation(Quaternion rotation){pizzaRestRotation=rotation;}
+
+        public void ShiftWorld(Vector3 delta)
+        {
+            previousPosition -= delta;
+        }
+
+        public void ResetMotion()
+        {
+            hasSample = false;
+            previousPosition = transform.position;
+            previousScrapeTime = float.NegativeInfinity;
+            frameRoll = framePitch = frameYaw = riderRoll = riderPitch = pizzaRoll = pizzaPitch = 0f;
+            frameRollVelocity = framePitchVelocity = frameYawVelocity = 0f;
+            riderRollVelocity = riderPitchVelocity = pizzaRollVelocity = pizzaPitchVelocity = 0f;
+            slopePitch = landingCompression = scrapePulse = 0f;
+        }
+
         private void OnValidate()
         {
             wheelRadius = Mathf.Max(0.03f, wheelRadius);

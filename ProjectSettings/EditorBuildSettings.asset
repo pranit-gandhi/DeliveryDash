@@ -4,6 +4,12 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/DeliveryDash/Scenes/TownDelivery.unity
+    guid: 102fc98204650461e9e80f156ae16aa1
+  - enabled: 1
+    path: Assets/DeliveryDash/Scenes/EndlessRun.unity
+    guid: a90ab623f0fc849f884383512bb4a74e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

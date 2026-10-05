@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace DeliveryDash
 {
-    // The hill supplies the forward motion. The player only steers.
+    // Automatic cruising with optional player acceleration. Service docking takes priority.
     [RequireComponent(typeof(CharacterController))]
     public sealed class CartFeelController : MonoBehaviour
     {
@@ -14,6 +14,23 @@ namespace DeliveryDash
         [SerializeField, Min(1f)] private float lateralGrip = 7f;
         [SerializeField, Min(1f)] private float gravity = 32f;
         [SerializeField, Min(0f)] private float groundStick = 4f;
+        [Header("Town driving")]
+        [SerializeField] private bool townDriving;
+        [SerializeField] private float townTurnRate = 100f;
+        [SerializeField] private float maximumSpeed = 14f;
+        public bool InputAcceleration => Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow);
+        public float MaximumSpeed => maximumSpeed;
+        public float CruiseSpeed => cruiseSpeed;
+        public void ConfigureRide(float cruise,float maximum,float acceleration,float turnRate)
+        {cruiseSpeed=cruise;maximumSpeed=Mathf.Max(cruise,maximum);launchAcceleration=acceleration;townTurnRate=turnRate;}
+        public static float RequestedSpeed(float cruise,float maximum,bool accelerate,float steer) => (accelerate?maximum:cruise)*(1-Mathf.Abs(steer)*.35f);
+        private TownDeliveryWorld town;
+        private Vector3 serviceTarget;
+        private float serviceHold, serviceYaw, serviceTimeout;
+        private int servicePhase;
+        public bool IsServicing => servicePhase != 0;
+        public bool IsHandingOff => servicePhase == 2;
+        public bool ServiceSucceeded { get; private set; }
 
         private CharacterController body;
         private float speed;
@@ -24,6 +41,7 @@ namespace DeliveryDash
         private float lastScrapeTime = float.NegativeInfinity;
         private float stalledFor;
         private Vector3 lastSafePosition;
+        private EndlessRoadGenerator endlessRoad;
 
         public float Speed => speed;
         public float SpeedNormalized => Mathf.Clamp01(speed / cruiseSpeed);
@@ -38,6 +56,8 @@ namespace DeliveryDash
         private void Awake()
         {
             EnsureBody();
+            endlessRoad = FindFirstObjectByType<EndlessRoadGenerator>();
+            town = FindFirstObjectByType<TownDeliveryWorld>();
         }
 
         private void OnEnable()
@@ -62,6 +82,7 @@ namespace DeliveryDash
         {
             if (body == null) EnsureBody();
             if (body == null) return;
+            if (townDriving) { DriveTown(Time.fixedDeltaTime); return; }
             float dt = Time.fixedDeltaTime;
             float input = 0f;
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) input -= 1f;
@@ -100,7 +121,8 @@ namespace DeliveryDash
                 stalledFor += dt;
                 if (stalledFor > 2f)
                 {
-                    ResetAt(lastSafePosition, Quaternion.identity);
+                    if (endlessRoad != null && endlessRoad.isActiveAndEnabled) endlessRoad.RecoverToRoad();
+                    else ResetAt(lastSafePosition, Quaternion.identity);
                     stalledFor = 0f;
                 }
             }
@@ -108,15 +130,106 @@ namespace DeliveryDash
 
         public void ResetAt(Vector3 position, Quaternion rotation)
         {
+            if (body == null) EnsureBody();
             body.enabled = false;
             transform.SetPositionAndRotation(position, rotation);
             body.enabled = true;
             speed = 0f;
             steering = 0f;
-            heading = 0f;
+            heading = rotation.eulerAngles.y;
             lateralSpeed = 0f;
             verticalSpeed = 0f;
             lastSafePosition = position;
+            stalledFor = 0f;
+            lastScrapeTime = float.NegativeInfinity;
+            servicePhase = 0;
+            ServiceSucceeded = false;
+        }
+
+        public void ShiftWorld(Vector3 delta)
+        {
+            body.enabled = false;
+            transform.position -= delta;
+            lastSafePosition -= delta;
+            serviceTarget -= delta;
+            body.enabled = true;
+        }
+
+        public void ConfigureTownDriving()
+        {
+            townDriving = true;
+            cruiseSpeed = 8f;
+        }
+
+        public void BeginService(Vector3 stop, float holdSeconds = 1.6f, Vector3? streetDirection = null)
+        {
+            if (!townDriving || IsServicing || !enabled) return;
+            serviceTarget = stop;
+            serviceHold = holdSeconds;
+            Vector3 departure = streetDirection ?? Vector3.forward;
+            if (Vector3.Dot(departure, transform.forward) < 0) departure = -departure;
+            serviceYaw = Quaternion.LookRotation(departure).eulerAngles.y;
+            serviceTimeout = 0;
+            ServiceSucceeded = false;
+            servicePhase = 1;
+        }
+
+        public void CancelService()
+        {
+            servicePhase = 0; ServiceSucceeded = false;
+        }
+
+        private void DriveTown(float dt, bool? accelerationInput = null)
+        {
+            Vector3 before = transform.position;
+            Vector3 motion;
+            if (IsServicing)
+            {
+                steering = Mathf.MoveTowards(steering, 0, dt * 8);
+                lateralSpeed = 0;
+                serviceTimeout += dt;
+                Vector3 offset = serviceTarget - before; offset.y = 0;
+                if (servicePhase == 1 && offset.magnitude > .06f)
+                {
+                    float desired = Mathf.Min(cruiseSpeed, Mathf.Sqrt(12f * offset.magnitude));
+                    speed = Mathf.MoveTowards(speed, desired, dt * 12);
+                    motion = offset.normalized * Mathf.Min(offset.magnitude, Mathf.Max(.4f, speed) * dt);
+                    heading = Mathf.MoveTowardsAngle(heading, serviceYaw, dt * 100);
+                    if (serviceTimeout > 6) { servicePhase = 0; ServiceSucceeded = false; }
+                }
+                else
+                {
+                    servicePhase = 2; speed = 0; motion = Vector3.zero;
+                    serviceHold -= dt;
+                    heading = Mathf.MoveTowardsAngle(heading, serviceYaw, dt * 100);
+                    if (serviceHold <= 0) { servicePhase = 0; ServiceSucceeded = true; }
+                }
+            }
+            else
+            {
+                float input = 0;
+                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) input -= 1;
+                if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) input += 1;
+                steering = Mathf.MoveTowards(steering, input, steeringResponse * dt);
+                heading = Mathf.Repeat(heading + steering * townTurnRate * dt, 360);
+                speed = Mathf.MoveTowards(speed, RequestedSpeed(cruiseSpeed,maximumSpeed,accelerationInput ?? InputAcceleration,steering), launchAcceleration * dt);
+                motion = Quaternion.Euler(0, heading, 0) * Vector3.forward * speed * dt;
+                lateralSpeed = steering * speed * .2f;
+            }
+            transform.rotation = Quaternion.Euler(0, heading, 0);
+            if (body.isGrounded && verticalSpeed < 0) verticalSpeed = -groundStick;
+            verticalSpeed -= gravity * dt;
+            motion.y = verticalSpeed * dt;
+            CollisionFlags hits = body.Move(motion);
+            if ((hits & CollisionFlags.Below) != 0) verticalSpeed = -groundStick;
+            if ((hits & CollisionFlags.Sides) != 0) { lastScrapeTime = Time.time; speed = Mathf.Min(speed, 3); }
+            float moved = Vector3.ProjectOnPlane(transform.position - before, Vector3.up).magnitude;
+            if (!IsServicing && body.isGrounded && moved < .005f && speed > 1)
+            {
+                stalledFor += dt;
+                if (stalledFor > 2 && town != null) town.RecoverRunner();
+            }
+            else stalledFor = 0;
         }
     }
 }
