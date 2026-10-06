@@ -169,3 +169,47 @@ End of brief. At kickoff, report Phase 0 findings, create the two root documents
 - Keep visible game text very short and plain. Use no em dashes. Treat visual cues, movement, sound, and the route itself as the primary teaching language.
 - Latest owner control direction supersedes earlier hop and drift proposals: every playable road segment must descend in the travel direction; the cart always moves forward; the player controls only left/right steering with A/D or arrow keys. Bumps, ramps, slides, and pizza instability should emerge from the route and steering, with no Space, Shift, brake, throttle, or manual balance action. Tune the forward speed to feel earned by the slope and make recovery automatic. Apply this invariant to authored modules and procedural joins, including forks and landings.
 
+
+## Owner-approved visual direction, 2026-10-05
+
+- The owner selected `references/deliverydash-pixel-target.png` as the authoritative visual target and asked for a complete pixel/mosaic presentation. This replaces the earlier visible 3D look. Preserve the original brief above for gameplay and historical context.
+- Match the reference's rear-view composition, warm hillside market, terracotta roofs, striped awnings, layered distant town and hills, teal canal, wooden shortcut, descending stone road, readable bump, seated courier and supported pizza. All visible parts must share a consistent pixel grid, perspective, palette and animation style.
+- The courier remains seated inside a shopping-cart basket. Automatic forward travel and left/right steering are the only driving controls. The full finite run lasts about two to three minutes, with meaningful seeded route choices, recoverable accidents, a delivery finish and retry. Keep visible text brief.
+- Do not publish or upload publicly without owner authorization. Use only relative project paths in project files and no personal information or profanity.
+
+## Owner-approved movement-first 3D pixel revamp, 2026-10-05
+
+- Supersedes the projected-road experiment: build a real downhill 3D world, rendered at 640 by 360 and displayed cleanly at 1280 by 720 in the built-in pipeline. Preserve earlier experiments outside the active build. Only distant sky and mountains may use backdrop imagery.
+- Use fixed-step world-space velocity, heading, steering, lateral grip and four wheel contacts. Initial hypotheses are 9 metres per second launch and 16 to 22 during descent, with visible steering response within 150 milliseconds. Slope, grip, corners and impacts affect speed. Steering is the only driving input.
+- Build movement and shared course data together. Route modules and sockets carry position, direction, width, elevation, surface, clearance and tested speeds. Every traversable surface descends, including lips, joins, branches and recovery.
+- First prove a 25 to 30 second course using actual keyboard play. Then validate 60 to 90 second generated slices across at least 1,000 seeds and multiple simulated frame rates. Only expand to 120 to 180 seconds after that gate.
+- Full routes need two visible forks with physically shorter or faster risky routes, bounded generation repair and a separately validated fallback. Validate physical steering, preview, landing and completion demands, not just connectivity.
+- An independent playtest agent must complete six representative seeds with actual controls, both branches, deliberate mistakes, failure, retry, pause and focus loss. Simulation is supporting evidence only.
+- Capture actual fresh camera views after meaningful changes, including turns, launch, landing, branches and finish. Independently test complete Web rounds, focus, sound, startup, resizing and frame time before packaging. No public upload.
+- Use short menus and essential HUD text. Labels include Go, Resume, Retry and New road. No slash-separated labels. Restrained rolling, impact and delivery audio must support activation and mute.
+
+## Owner gameplay updates, 2026-10-05
+
+- The real downhill scene is the approved direction. Prioritize substantial gameplay code: slopes, speed, ground obstacles, automatic jumps, forks and meaningful seeded PCG. Procedural generation should drive the course and interactions.
+- Road-edge contact now causes a failed run, superseding the earlier recoverable curb scrape rule: courier falls forward, pizza flies toward the camera, a mustard-yellow effect precedes Game over and score, with immediate Retry.
+- Add airborne rider seat lift, a brief pizza bounce above the hand, and cap flight/return. These requested jump reactions supersede uninterrupted hand/box contact during airborne reactions. Preserve believable support in ordinary driving and restore all state on retry.
+- Make the tan shorts visibly distinct. More scenery alone does not satisfy the movement and gameplay direction. Independent actual keyboard and browser verification remain required.
+
+- Follow-up: shorts should now be black. Fix player/building ground alignment and visible automatic takeoff before adding more content; verify actual play or rendered behavior after each meaningful change. Excessive steering and sliding can physically topple the cart, with a visible warning lean and countersteering opportunity.
+
+## Owner updates: 2026-10-05 movement, scenery and menus
+
+- Space now requests a small manual suspension hop. This supersedes the earlier no-manual-hop rule. Keep steering-only automatic descent otherwise. Require a cooldown, airborne loss of grip, landing wobble, and independent rider, cap and supported-box bounce.
+- Add earlier and more visible actual forks, denser large crate and car sections, and continuous ground without exposed blue mesh gaps.
+- Use the owner supplied eat-sa-pizza.wav for menu music and loop no_space_to_think.flac while carting. Preserve mute and browser activation.
+- Scenery is seeded with summer, spring and sunset as common presets and winter as a rare preset. Coordinate landscape, foliage, city palette, lighting and sky.
+- Main and pause menus should blend with the environment. Use the supplied Simonetta family for retro Italian lettering. The owner rejected the interim opaque panel menus. Keep the playfield visible and labels short.
+
+## Latest collision and interface update, 2026-10-05
+
+- Every physical obstacle collision causes the courier fall and failed-run sequence, superseding recoverable obstacle impacts.
+- Jumping outside the road bounds must remain safe while airborne. Allow steering back onto the road before landing. Failing the bounds check requires ground contact outside the road, including the actual rendered roadside terrain.
+- Remove the pizza condition readout, road seed label and mute buttons from all visible interfaces. Keep score, elapsed time, route progress and the small hop cooldown cue.
+
+- Add substantially more physical forks and ground interactions beyond crates. Visible fluid spins the cart 360 degrees in the steering direction, with wobble and possible loss of control. Visible spikes cause an immediate fall. Keep avoidable safe lanes, preview time and recovery.
+- Continue autonomous local work while preserving the current retro visual direction. Favor polished changes and stronger game feel over a major visual redesign.

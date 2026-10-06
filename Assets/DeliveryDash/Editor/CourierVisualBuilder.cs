@@ -15,8 +15,12 @@ namespace DeliveryDash.Editor
             var courier = new GameObject("Courier seated in basket").transform;
             courier.SetParent(parent, false);
             courier.localPosition = new Vector3(0f, 0f, -.14f);
-            var source = AssetDatabase.LoadAssetAtPath<GameObject>(BasePath + "CourierBase.fbx");
+            string sourcePath=BasePath+"CourierBase.fbx";
+            var importer=(ModelImporter)AssetImporter.GetAtPath(sourcePath);
+            if(!importer.isReadable){importer.isReadable=true;importer.SaveAndReimport();}
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>(sourcePath);
             var model = (GameObject)PrefabUtility.InstantiatePrefab(source);
+            PrefabUtility.UnpackPrefabInstance(model,PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
             model.name = "Courier anatomy";
             model.transform.SetParent(courier, false);
             model.transform.localPosition = new Vector3(0f, -.32f, -.20f);
@@ -31,7 +35,7 @@ namespace DeliveryDash.Editor
             }
             var red=Material("Courier crimson shirt", new Color(.56f,.055f,.04f));
             var black=Material("Courier charcoal sleeves",new Color(.065f,.07f,.078f));
-            var tan=Material("Courier canvas shorts",new Color(.45f,.32f,.19f));
+            var tan=Material("Courier canvas shorts",new Color(.065f,.071f,.080f));
             SkinnedGarmentBuilder.Build(body,red,black,tan);
 
             var pelvis=Find(model.transform,"pelvis");
@@ -39,7 +43,9 @@ namespace DeliveryDash.Editor
             // Flexion is applied to the actual two-bone chains, keeping their lengths.
             PoseLimb(model.transform,"thigh_l","calf_l","foot_l",courier.TransformPoint(new Vector3(-.24f,.73f,.27f)),courier.TransformPoint(new Vector3(-.28f,.37f,.34f)));
             PoseLimb(model.transform,"thigh_r","calf_r","foot_r",courier.TransformPoint(new Vector3(.30f,.78f,.26f)),courier.TransformPoint(new Vector3(.40f,.42f,.36f)));
-            PoseLimb(model.transform,"upperarm_l","lowerarm_l","hand_l",courier.TransformPoint(new Vector3(-.47f,1.07f,-.13f)),courier.TransformPoint(new Vector3(-.49f,1.025f,-.48f)));
+            // BuildDownhill scales the cart shell separately. Its left red grip is
+            // at roughly (-.59, 1.01, -.76) in the shared suspension frame.
+            PoseLimb(model.transform,"upperarm_l","lowerarm_l","hand_l",courier.TransformPoint(new Vector3(-.47f,1.07f,-.25f)),courier.TransformPoint(new Vector3(-.59f,1.01f,-.62f)));
             PoseLimb(model.transform,"upperarm_r","lowerarm_r","hand_r",courier.TransformPoint(new Vector3(.47f,1.02f,-.06f)),courier.TransformPoint(new Vector3(.69f,1.30f,-.05f)));
 
             var left=Find(model.transform,"hand_l");
@@ -86,8 +92,9 @@ namespace DeliveryDash.Editor
                 outsole.transform.localPosition=new Vector3(0,-.047f,0);
                 for(int i=0;i<4;i++)
                     Tube("Cotton lace",shoe,new Vector3(-.06f,.079f,.04f+i*.029f),new Vector3(.06f,.079f,.05f+i*.029f),.007f,sole);
+                shoe.SetParent(foot,true);
             }
-            var cardboard=Material("Warm cardboard",new Color(.68f,.52f,.33f));
+            var cardboard=Material("Warm cardboard",new Color(.88f,.77f,.58f));
             pizzaPivot=new GameObject("Pizza supported at fingertips").transform;
             pizzaPivot.SetParent(right,true);
             Vector3 support=Vector3.zero;
@@ -145,6 +152,7 @@ namespace DeliveryDash.Editor
             }
             MeshObject("Blond locks below cap",root,SaveMesh("CourierNapeHair",v,t),blond);
             root.SetParent(head,true);
+            root.localScale *= .90f;
         }
         static void BuildCap(Transform head,Transform courier,Material red,Material dark)
         {
@@ -205,12 +213,14 @@ namespace DeliveryDash.Editor
         }
         static void PizzaBox(Transform parent,Material mat)
         {
-            Box("Corrugated pizza base",parent,new Vector3(0,.029f,0),new Vector3(.63f,.058f,.63f),mat);
-            Box("Closed lid",parent,new Vector3(0,.064f,-.005f),new Vector3(.641f,.018f,.63f),mat);
-            var fold=Material("Cardboard cut edges",new Color(.42f,.28f,.14f));
+            Box("Corrugated pizza base",parent,new Vector3(0,.018f,0),new Vector3(.63f,.036f,.63f),mat);
+            Box("Closed lid",parent,new Vector3(0,.056f,-.005f),new Vector3(.641f,.024f,.63f),mat);
+            var ink=Material("Pizza red lid ink",new Color(.62f,.10f,.055f));
+            Box("Pizza lid mark",parent,new Vector3(0,.069f,0),new Vector3(.28f,.003f,.25f),ink);
+            var fold=Material("Cardboard cut edges",new Color(.57f,.42f,.27f));
             for(int s=-1;s<=1;s+=2)
-                Box("Folded lid edge",parent,new Vector3(s*.317f,.045f,0),new Vector3(.012f,.036f,.625f),fold);
-            Box("Front lid tab",parent,new Vector3(0,.033f,-.32f),new Vector3(.105f,.032f,.009f),mat);
+                Box("Folded lid edge",parent,new Vector3(s*.317f,.032f,0),new Vector3(.012f,.025f,.625f),fold);
+            Box("Front lid tab",parent,new Vector3(0,.022f,-.32f),new Vector3(.105f,.025f,.009f),mat);
         }
         static GameObject Box(string name,Transform parent,Vector3 p,Vector3 size,Material mat)
         {

@@ -26,3 +26,23 @@ Thumbs.db
 # Local test builds
 /WebBuild/
 /Captures/
+
+# Isolated verification projects and browser test data
+/.verify-downhill/
+/VerifyDownhill/
+**/browser-profile/
+
+# Unity crash recovery and local diagnostics
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+*.log
+*.trace
+
+# Credentials and local environment settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12

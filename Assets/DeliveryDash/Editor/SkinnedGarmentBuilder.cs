@@ -28,6 +28,8 @@ namespace DeliveryDash.Editor
             if (body == null || body.sharedMesh == null || body.bones == null || body.bones.Length == 0)
             { Debug.LogError("Courier garments need a skinned body mesh and bones."); return; }
             Mesh source = body.sharedMesh;
+            if(!source.isReadable||source.vertices.Length==0||source.normals.Length!=source.vertexCount||source.triangles.Length==0)
+                throw new InvalidOperationException("Courier garment source must contain readable full body geometry");
             if (source.boneWeights.Length != source.vertexCount)
             { Debug.LogError("Courier body mesh has no usable skin weights."); return; }
             var bones = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -36,7 +38,43 @@ namespace DeliveryDash.Editor
             Vector3[] smooth = SmoothAnatomy(source);
             BuildPart(body, source, smooth, bones, Garment.Shirt, "Tailored red tee", "Courier_Tee.asset", shirt);
             BuildPart(body, source, smooth, bones, Garment.Sleeves, "Black half sleeves", "Courier_HalfSleeves.asset", sleeve);
-            BuildPart(body, source, smooth, bones, Garment.Shorts, "Tan cuffed shorts", "Courier_Shorts.asset", shorts);
+            BuildPart(body, source, smooth, bones, Garment.Shorts, "Black cuffed shorts", "Courier_Shorts.asset", shorts);
+            MaskCoveredSkin(body, source, bones);
+        }
+
+        static void MaskCoveredSkin(SkinnedMeshRenderer body, Mesh source, Dictionary<string, int> bones)
+        {
+            Vector3[] positions = source.vertices;
+            BoneWeight[] weights = source.boneWeights;
+            int[] original = source.triangles;
+            var visible = new List<int>(original.Length);
+            for (int i = 0; i < original.Length; i += 3)
+            {
+                int a = original[i], b = original[i + 1], c = original[i + 2];
+                Vector3 center = (positions[a] + positions[b] + positions[c]) / 3f;
+                float torso = (Influence(weights[a], bones, "pelvis", "spine_01", "spine_02", "spine_03") +
+                    Influence(weights[b], bones, "pelvis", "spine_01", "spine_02", "spine_03") +
+                    Influence(weights[c], bones, "pelvis", "spine_01", "spine_02", "spine_03")) / 3f;
+                float upperArm = (Influence(weights[a], bones, "upperarm_l", "upperarm_r") +
+                    Influence(weights[b], bones, "upperarm_l", "upperarm_r") +
+                    Influence(weights[c], bones, "upperarm_l", "upperarm_r")) / 3f;
+                float thigh = (Influence(weights[a], bones, "thigh_l", "thigh_r") +
+                    Influence(weights[b], bones, "thigh_l", "thigh_r") +
+                    Influence(weights[c], bones, "thigh_l", "thigh_r")) / 3f;
+                bool shirtCovered = center.z > 1.015f && center.z < 1.535f &&
+                    Mathf.Abs(center.x) < .32f && torso > .35f;
+                bool sleeveCovered = center.z > 1.31f && center.z < 1.59f &&
+                    Mathf.Abs(center.x) > .20f && Mathf.Abs(center.x) < .45f && upperArm > .42f;
+                bool shortsCovered = center.z > .73f && center.z < 1.055f &&
+                    Mathf.Abs(center.x) < .29f && (torso + thigh) > .4f;
+                if (shirtCovered || sleeveCovered || shortsCovered) continue;
+                visible.Add(a); visible.Add(b); visible.Add(c);
+            }
+            Mesh cut = UnityEngine.Object.Instantiate(source);
+            cut.name = "Exposed courier skin";
+            cut.SetTriangles(visible, 0);
+            cut.RecalculateBounds();
+            body.sharedMesh = SaveMesh(cut, "Courier_ExposedSkin.asset");
         }
 
         // Weld only for smoothing. The imported body has duplicate vertices at UV seams.
@@ -129,7 +167,7 @@ namespace DeliveryDash.Editor
                 }
             }
 
-            if (vertices.Count == 0) { Debug.LogError("No cloth surface for " + name); return; }
+            if (vertices.Count == 0) throw new InvalidOperationException("No cloth surface for " + name);
             AddFoldedEdges(part, vertices, skinWeights, triangles);
             var garmentMesh = new Mesh { name = name + " sewn skinned cloth" };
             garmentMesh.SetVertices(vertices);
@@ -179,15 +217,15 @@ namespace DeliveryDash.Editor
                     if (distance < best) { best = distance; closest = i; }
                 }
                 Vector3 original = p;
-                Vector3 cloth = p + (smooth[closest] - raw[closest]) * .62f + vertex.normal.normalized * (garment == Garment.Shirt ? .105f : .075f);
+                Vector3 cloth = p + (smooth[closest] - raw[closest]) * .62f + vertex.normal.normalized * (garment == Garment.Shirt ? .040f : .035f);
                 if (garment == Garment.Shirt)
                 {
                     // A relaxed tee hangs from the shoulders. It bridges the body relief
                     // instead of tracing every muscle, while retaining a tapered waist.
                     float chest = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.15f, 1.37f, p.z));
-                    float width = Mathf.Lerp(.275f, .315f, chest);
-                    float front = Mathf.Lerp(.215f, .255f, chest);
-                    float back = Mathf.Lerp(.235f, .275f, chest);
+                    float width = Mathf.Lerp(.220f, .260f, chest);
+                    float front = Mathf.Lerp(.165f, .205f, chest);
+                    float back = Mathf.Lerp(.185f, .225f, chest);
                     float center = .021f;
                     float depth = p.y < center ? front : back;
                     float angle = Mathf.Atan2((p.y-center)/depth, p.x/width);

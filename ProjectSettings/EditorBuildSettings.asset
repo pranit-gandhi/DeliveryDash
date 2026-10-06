@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/DeliveryDash/Downhill/Scenes/DownhillRun.unity
+    guid: 2abf09d8beb12f44d9cb542ff2ff452e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -1,10 +1,66 @@
 # DeliveryDash progression
 
+## 2026-10-05: current game preserved for main commit
+
+- The owner approved the current appearance and requested a privacy cleanup followed by a commit to the existing repository's main branch. Preserve this version's art, scenes, controls and gameplay for this task.
+- Inspected the live `DownhillRun` camera in Play mode. The scene is saved and has no pending scene changes. No gameplay, art or scene edits were made during cleanup.
+- Reviewed all 32 project and reference images, image metadata, both music files' metadata, and project files including binary assets. No personal photographs, owner identity, home paths or credentials were found in project content. Public third-party license and font attribution are retained.
+- Moved local captures, the isolated browser test profile, diagnostics and both verification project copies outside the project. Added ignore rules for verification copies, browser profiles, crash recovery, diagnostics and credential files. Unity's generated caches and local settings remain excluded from Git.
+- Commit author name and email are retained only in Git metadata. This checkpoint preserves the current game; it does not establish additional playtest or release verification.
+
 | Status | Current state |
 | --- | --- |
-| Phase | 1: art reset and feel playground |
-| Playable state | The saved scene opens and current Console has no C# errors. Fresh courier capture still fails visual review. No complete run, PCG, or Web build is verified. |
-| Next step | Complete and inspect the downhill district rebuild; fix invisible skinned garments, hand contacts, and cart silhouette; then test in Play mode. |
+| Phase | Real downhill PCG implementation and live verification |
+| Playable state | Saved DownhillRun now integrates five forks, fluid spins, spikes, fatal obstacle contacts, landing-only bounds failure and restored clothing. Guided filters completed 36 of 36 routes across six seeds and three rates. Geometry passed 1,000 seeds. Independent browser rounds and the full controller sweep remain outstanding. |
+| Next step | Independently play the rebuilt Web version, inspect fork readability and complete the full controller sweep. Preserve the current retro style while polishing feedback. |
+
+## 2026-10-05: real downhill scene built, movement changes awaiting keyboard test
+
+- Discovered the existing Unity Bridge through its local IPC transport and called Unity_GetUserGuidelines successfully. Verified Unity 6000.2.14f1 and this project. The live editor was running the rejected PixelRun scene with a PixelSceneView courier initialization error. Stopped Play before rebuilding.
+- Built and saved `Assets/DeliveryDash/Downhill/Scenes/DownhillFeel.unity` using the approved menu. Live Console query after the build returned zero errors. Fresh actual 1280 by 720 camera: `Captures/downhill-20261005-205326.png`, timestamp 2026-10-05 20:53:26 UTC. Primary visual verdict FAIL: repeated facades, absent distant world, exposed launch road edge, small courier. This is evidence of a real 3D scene, not visual acceptance.
+- Movement agent removed route-heading and cruise-speed clamps, made gravity follow slope, resolved curb penetration with brief inward deflection, reset retry state, added actual rendered-triangle wheel contact sampling and camera reset. Standalone compilation against installed Unity assemblies passed, but keyboard testing has not yet verified these changes.
+- Course agent added shared road edges, exact triangle surface contact, module/socket compatibility and grade/curvature checks. Numerical formula audit found 58.605 metres descent over 491.42 metres actual centerline. These are authored-data checks. Module previews and speed ranges remain untested; full PCG is gated on actual keyboard feel.
+- Added editor-only observation of actual keyboard flags and session telemetry, plus camera captures for observed turns, takeoff, landing, scrape and finish. It does not supply steering. Captures can add transient overhead, so timing collected while capture occurs is not a release performance measurement.
+- Detected concurrent source edits outside the assigned agent ownership. Preserved them and held overlapping edits until files were idle. No new commit, push, upload or purchase.
+
+## 2026-10-05: owner gameplay direction and crash implementation in progress
+
+- The owner approved the real downhill direction and requested substantial gameplay changes: more speed/slope, ground obstacles, automatic jumps, actual forks and PCG as the core. This authorizes generator source work while live feel testing continues; no playability acceptance is implied.
+- Latest owner edge rule supersedes recoverable curb scrapes: touching the road edge ends the run. Added latched edge failure and a bounded presentation sequence: courier pitches forward, pizza travels toward the camera, mustard-yellow splat appears, then Game over with score and Retry. Session pause/focus handling and retry restore detached cap/pizza and clear the overlay. Source exists; runtime behavior is not yet verified.
+- Owner explicitly requested airborne rider, pizza and cap reactions. This supersedes continuous support during jump reactions only; ordinary driving still preserves support. Added independent rider seat lift, pizza bounce and cap lift/return in visual source. Made tan shorts material lighter and more distinct; actual updated clothing render still pending.
+- PCG and movement agents are implementing shared obstacles and true branch geometry. Added New road session wiring and a separate DownhillRun build menu while preserving DownhillFeel. Added runtime course-aligned town dressing with varied silhouettes and per-block mesh combining to avoid thousands of draw calls. No claim of visual pass or browser performance.
+- Independent critic rejected the first downhill camera for launch void, small courier, buried legs, unreadable hair and repeated box houses. Desktop focus tooling was blocked waiting sandbox approval and eventually aborted; critic did not change Unity Play state or complete keyboard play. A narrow reusable keyboard helper is being prepared for independent play.
+
+## 2026-10-05: ground alignment and jump correction in progress
+
+- Owner observed ground sinking and absent jumps in live play, requested black shorts and physics-driven toppling from excessive steering/sliding. These observations are failures to fix, not acceptance of the current controller.
+- Found a source/scene mismatch risk: session recreated generator data but used saved road meshes from an older source revision. Session now rebuilds the visible course and town from the exact CourseGraph used by wheel contacts at startup and New road. Added black shorts material; reduced decorative frame lean from eight to two degrees so it cannot independently bury outside wheels.
+- Movement agent identified decorative roll lowering outside wheel geometry farther than ride clearance. Physical roll, caster footprint matching, support lift and a leading-wheel natural takeoff correction are being implemented. Validation and fresh live capture remain pending for this slice.
+- Built preliminary `Assets/DeliveryDash/Downhill/Scenes/DownhillRun.unity` with obstacles and two real branches. Capture `Captures/downhill-20261005-211204.png`, 2026-10-05 21:12:04 UTC, is a preview before ground/jump corrections, not a verified playable run. Console error query returned zero, but a dynamic 1,000-seed command lost its IPC connection during compilation; no returned seed-sweep result is claimed.
+
+## 2026-10-05: approved real 3D revamp and handoff checkpoint
+
+- The owner explicitly approved the movement-first 3D pixel plan. Its decisions are appended to `PROMPT.md`; the original brief is preserved. `HANDOFF.md` is the standalone continuation prompt and implementation plan.
+- Unity MCP `Unity_GetUserGuidelines` succeeded. The Editor was in Play mode in the earlier PixelRun scene. `Unity_ManageEditor` Stop succeeded before scene work. The existing Bridge works; do not ask the owner to enable it.
+- New source under `Assets/DeliveryDash/Downhill/` is separate from the rejected projected-road experiment. The new intended scene is `Assets/DeliveryDash/Downhill/Scenes/DownhillFeel.unity`. It has not yet been built or captured at this checkpoint.
+- `Scripts/CourseGraph.cs` defines a 480 metre descending feel-course sampler, surfaces and event data. This is an authored course, not a completed procedural generator. RouteModule sockets, real branches, full grammar, repair and fallback remain outstanding. The route agent is implementing `CourseMeshBuilder.cs` and repairing nearest-sample interpolation.
+- `Scripts/DownhillCart.cs` implements fixed-step world-space velocity, steering heading, bounded lateral grip, slope acceleration, four contact samples, launch and scrape recovery. `DownhillChaseCamera.cs` follows heading and velocity, with serialized references and a restrained speed-dependent field of view. None of these have passed actual keyboard testing yet.
+- Root added `DownhillSession.cs`, `DownhillVisuals.cs`, `PixelOutput.cs` and `Editor/BuildDownhill.cs` for integration. The session currently supports only the feel course, a 55 second timeout, start, pause, retry and mute. Mute does not establish implemented game audio. The simple architecture is unreviewed and must not be represented as finished art.
+- Latest Console query found three integration errors: missing `CourseMeshBuilder` while that agent was still writing it, plus two invalid `Camera.AddComponent` calls. The two camera calls were corrected to `camera.gameObject.AddComponent`; a fresh compilation is still required. Session finish comparison was corrected to use `Cart.Distance` rather than normalized `Progress`.
+- Read-only critic inspected the historical courier capture and builders. Findings: basket lattice hides legs; pizza reads as a thick dark slab; root-parented cap, hair and shoes cannot follow independent head or foot animation. These are open defects, not accepted visuals.
+- Previous old-Pixel automated completion and 1,000 grammar checks do not apply to this new controller or course. No new seed sweep, independent keyboard completion, browser run, frame-time result or release package exists.
+- No new Git commit, push, public upload or asset purchase was performed. Preserve the current uncommitted working tree and all references.
+- Handoff follow-up: `HANDOFF.md` now contains the full approved implementation plan and exact continuation instructions. The critic also rejected the draft repeated cube-house architecture on source inspection and identified likely left-hand grip separation caused by scaling the cart independently. Route agent reports continuous contact sampling and a descending lip transition have been corrected in source. These corrections are still untested in Play mode.
+- The feel course now has eight explicit contiguous `RouteModule` records and world-space entry/exit sockets with width, elevation, surface, clearance and speed envelopes. The authored route validation checks module spans and joins. This source change has not yet received a fresh Unity compile or physical keyboard test; seeded generation and branches remain outstanding.
+
+## 2026-10-05: pixel scene and first live capture
+
+- Preserved the earlier 3D feel scene and created `Assets/DeliveryDash/Pixel/Scenes/PixelRun.unity`. The owner-selected target is `references/deliverydash-pixel-target.png`. The new project art is under `Assets/DeliveryDash/Pixel/Art/` with relative provenance in `SOURCE.md`.
+- Added three Mediterranean town plates and a separate courier-cart sprite. The rider has a red backward cap, visible blond hair, red shirt with black sleeves, tan shorts, shoes, left cart grip, and a box resting on the right upturned hand. These are an opening visual, not evidence of complete animation.
+- Added a seeded route grammar and separate steering-only automatic cart/session logic. A local C# sweep reported 1,000 seeds with zero grammar validation failures or fallbacks and 139 to 154 seconds estimated travel. Actual Unity physical play and finish remain unverified.
+- Unity MCP confirmed Edit state and zero project compile errors after import. `DeliveryDash/Build pixel run` saved the scene and produced `Captures/pixel-run-edit.png` at 1280 by 720. Unity entered Play mode; a live camera capture was saved to `Captures/pixel-run-play.png` at 1280 by 720. The `Unity_Camera_Capture` MCP call returned `Failed to render scene preview`, so a Unity editor command rendered the active game camera instead.
+- Visual critic verdict on the edit capture: conditional fail as game evidence despite much better courier and town composition. Verdict on the live capture: fail. The current dynamic road is a flat straight gray wedge over a baked curved street, with a hard distant seam, mismatched paving scale, no immediate bump, and no credible boardwalk entry. This is an active defect. Next experiment is to align the dynamic road with the painted town, make the first route beat readable, then capture multiple running states.
+- A complete 2 to 3 minute run, fairness observation, audio check, browser Web test, and package are still outstanding. No public upload or new Git push was made in this pixel rebuild.
 
 ## 2026-10-02: kickoff audit
 
@@ -83,3 +139,65 @@
 - Changed root document mentions to relative paths. Added `Assets/DeliveryDash/Art/Textures/SOURCES.md` with official CC0 source links for five Poly Haven texture sets.
 - Fresh courier evidence is `Captures/courier-pass-04.png` at 1280 by 720, captured after a garment fit correction. The red shirt appears again; it still has oversized shoulder shapes and is not an accepted final visual. The town remains the old pale corridor until its unfinished replacement is integrated. No Play mode or Web verification was performed for this sharing pass.
 - Current Console reports no C# errors and only Unity AI account/security warnings. This is shared as active work in progress for teammate access, not a finished game.
+
+
+## 2026-10-05: owner-selected pixel rebuild
+
+- The owner selected `references/deliverydash-pixel-target.png` as the visual target. The previous visible 3D town and courier are rejected. The reference image was copied into the project without changing the six original references.
+- Verified live Unity MCP: project root, editor state, and Console. Unity 6000.2.14f1 is in Edit mode, idle, with no current C# errors. Current scene and 3D work are preserved while a separate pixel game scene is built.
+- Set the full delivery game as an active goal. Parallel roles: route grammar and validation, runtime/session controls, pixel presentation/integration, and independent critic. No pixel scene, gameplay test, or Web build exists at this entry.
+
+### Final source checkpoint before model handoff
+
+- CourseMeshBuilder is now saved. After asset refresh, Unity reported Edit mode, not compiling and not updating. The final Console error query returned zero errors.
+- Unity_RunCommand successfully compiled and executed `CourseGraph.CreateFeel().Validate(out report)`: True, OK, 481 samples, 480 metres. This checks only the authored course data constraints implemented in that method. It does not validate full PCG, keyboard playability, jump reach or visual quality.
+- The new scene has not been built or captured. All actual keyboard and browser tests remain pending. No game completion is claimed.
+- A full `git diff --check` reports pre-existing Unity scene YAML trailing whitespace in the modified FeelPlayground scene. Do not repeat the agent-only source whitespace check as a clean whole-repository result.
+
+
+## 2026-10-05 21:29 UTC: dense generated slice and controller smoke evidence
+
+- Latest saved scene: Assets/DeliveryDash/Downhill/Scenes/DownhillRun.unity. Fresh actual camera Captures/downhill-20261005-212203.png, 2026-10-05 21:22:03 UTC, 1280 by 720. Independent visual critic FAIL: unreadable black shorts, tiny box, repetitive architecture, empty sky, cyan curb gap and mismatched launch apron. Static wheel grounding and left grip pass in this frame only.
+- PCG source includes fifteen shared physical obstacles per slice: boxes, barrels, parked/crossing cars and trolleys; two real forks and two to four descending takeoff sites. Owner requested still more density and variety; next source revision is in progress.
+- Edit-mode smoke report Captures/controller-filters-20261005-212931.json: seeds 2647, 12, 93, 441, 817, 991; both route choices; 30, 60, 120 simulation rates; 36 completions, zero route failures. Measured flight duration 1.33 to 1.43 seconds. Steering response 0.04 seconds, edge failure and retry passed. Topple failure check FAILED; countersteer recovery passed. These are guided simulations, not independent keyboard play.
+- The same live suite ran 1,000 geometry seeds: zero failures, zero fallbacks, nine action sequences and estimated 73.3 to 78.5 second slices. This does not prove fairness or fun. Full 1,000-seed controller suite remains outstanding.
+- An earlier invocation was rejected by the Edit-mode guard because Play was active. Coordinated Stop then smoke succeeded. Console contains that historical guard exception; no compile error is claimed from it.
+- Added local Web build menu and reproducible browser seed parameter in source; Web build and browser test pending. Reduced rear cart lattice in the new builder variant to expose black shorts; fresh capture still required.
+
+## 2026-10-05: latest owner feature integration, not yet accepted
+
+- Latest source expands generated slices to three physical forks, with the first near 165 metres, and a longer approximately 80 to 90 second route. Shortened early sweep curvature required a source correction after the fallback validation rejected steering demand. Previous 1,000-seed and 36-run results do not validate this expanded grammar.
+- Added Space suspension hop with a 3.2 second cooldown, airborne grip loss, rider/cap/box bounce, minor pizza cost and landing wobble. Added native controller filters for air time, repeated request rejection and retry reset. Actual keyboard Space testing remains pending.
+- Imported selected original Kenney CC0 city and nature models and licenses. DownhillBackdrop creates continuous valley terrain, three distant district rows, trees and skyline landmarks. Background compiler and OBJ data checks passed; fresh actual camera review after scene integration is pending.
+- Added seeded summer, spring, sunset and rare winter scenery palettes with coordinated ground, foliage, sky, sunlight and fog. Seasonal rendering remains pending.
+- Imported owner supplied menu WAV and carting FLAC as Unity AudioImporter assets. Added looping crossfade music source. Runtime looping, volume and browser audio activation remain pending.
+- Owner rejected interim opaque menu cards. Replaced them with Simonetta lettering, open world-backed menus, angled brand, thin rules and text actions. Imported four Simonetta TTFs and OFL. Runtime font resolution and actual Game View review remain pending.
+- Latest saved scene before these integrations was DownhillRun. Fresh rebuild, camera critic and independent keyboard pass are required. No Web release or verified package exists.
+
+## 2026-10-05 23:04 UTC: integrated scene and Simonetta evidence
+
+- Rebuilt and saved Assets/DeliveryDash/Downhill/Scenes/DownhillRun.unity. Post-build Console error query returned zero errors. Actual camera Captures/downhill-20261005-225859.png at 22:58:59 UTC is 1280 by 720. Primary review FAIL for oversized pale sky streaks and sparse angular distant hills. Courier grounding, cap placement and hand support read in this static pose only.
+- Actual Ready Game View capture Captures/keyboard-20261005-230256-696-capture.png at 23:02:56 UTC confirms Simonetta font loading, open world-backed layout and readable main actions. This is a desktop crop of the QHD Game View, not a 1280 by 720 UI capture. Pause and result layouts still need direct review.
+- Current guided simulation report Captures/controller-filters-20261005-225637.json passed 36 routes across seeds 2647, 12, 93, 441, 817, 991, safe and risky choices, and 30, 60, 120 simulation rates. Hop air time 1.08 seconds, repeated request rejection, hop reset, topple, edge failure and obstacle overlap escape passed. Early countersteer caught slip to -0.23 degrees but retained tip fraction 0.902 after the measurement window: chassis settling FAIL. These are controller simulations, not independent keyboard play.
+- Latest geometry sweep: 1,000 seeds, zero structural failures, zero fallbacks, 1,000 action-and-hazard sequence signatures, estimated 85.5 to 91.9 second slices. No inference of fun or human fairness.
+- Removed the old feel-course canal strip from generated town sections; legitimate fork canal beds remain. Added procedural seasonal sky gradient and sun, which require the streak correction identified above.
+- Independent tester has exclusive keyboard and Editor lease. Two attempted input scripts refused safely after foreground focus was lost; no independent input result is claimed from those attempts. Owner observations before the lease are separate evidence. No Web build, browser completion or verified package yet.
+
+## 2026-10-05 23:33 UTC: latest rules and clothing recovery
+
+- Owner requested continued autonomous work with gameplay and feel improvements, preserving the current retro appearance. New instructions supersede forgiving obstacle impacts: every solid obstacle contact causes a fall. Remove visible pizza condition, road seed and mute controls. Airborne road bounds must allow steering back before landing.
+- Captures/controller-filters-20261005-232425.json is a guided simulation report, not keyboard play. Airborne crossing, return to road, outside-ground landing failure, obstacle fall, static/moving overlap fall, hop/cooldown/reset, edge and topple checks passed. Expanded fatal rule exposed 19 of 36 route-guidance failures; this is not a passed course suite. Early chassis settling remained too slow. A revised trajectory-aware guide and balancing response are being tested.
+- Diagnosed missing clothing after an Edit rebuild: original FBX CPU geometry was unreadable. Enabled mesh readability before garment construction, made invalid geometry/empty garments abort, and unpacked the customized rig so mesh changes and garments persist. Fresh actual camera Captures/downhill-20261005-231438.png, 23:14:38 UTC, 1280 by 720, has restored red shirt, black sleeves and black shorts. All three garment objects exist in the saved scene. Rebuild Console query returned zero errors.
+- Removed obsolete overlapping Town.Hills geometry. Independent critic passed distant-city visibility, ground coverage, route composition and warm lighting in 23:14:38 capture; vegetation and final background richness failed. Added contour olive groves and grounded terrace detail in source; integrated capture pending.
+- First local Web build compiled and started over local HTTP. Captures/browser-first-build.png shows Simonetta correctly but naked courier: this build FAILS clothing verification and is not packaged. Audio source reported menu playback requested with time zero before browser activation; audible playback and looping remain unverified. No independent complete browser round yet.
+- Native independent input attempts were confounded by changed seeds, lost foreground and resumed state. They do not establish independent play. Tester is moving to an isolated browser with actual keyboard events, screenshots and read-only telemetry.
+- Five-fork source grammar now targets about 125 second runs. Added amber fluid patches and visible spike pads, with safe escape corridors and quiet recovery. Fluid begins a 360 degree cart spin in the last steering direction, keeps travel camera stable, adds wobble, and can be avoided with Space. Spikes are fatal physical contacts. These latest mechanics are source integrations awaiting fresh compile, simulation, camera review and keyboard evidence.
+
+## 2026-10-05 23:38 UTC: integrated five-fork scene and revised filters
+
+- Saved `Assets/DeliveryDash/Downhill/Scenes/DownhillRun.unity` in stable Edit mode. Actual camera `Captures/downhill-20261005-233849.png`, timestamp 2026-10-05 23:38:49 UTC, is 1280 by 720. Primary inspection confirms black shorts, seated anatomy, cap on head, left grip contact, supported pizza and grounded visible cart. Independent criticism is pending. This static launch frame cannot verify fork readability or movement.
+- `Captures/controller-filters-20261005-233710.json` completed 36 guided routes across seeds 2647, 12, 93, 441, 817 and 991, both route choices, at 30, 60 and 120 simulation steps per second. All routes passed. This supersedes the earlier 17-pass, 19-failure guidance result; the guide now accounts for complete hazard footprints and avoids corner cutting. These are controller simulations, not independent keyboard play.
+- In the same report, all 1,000 geometry seeds passed with zero fallbacks and 1,000 action and hazard signatures. Response measured 0.04 seconds. Hop airtime measured 1.08 seconds; cooldown spam and retry reset passed. Both spin directions, hopping over fluid, fatal spikes and obstacle overlap, safe airborne boundary crossing, return to road and fatal outside-ground landing passed.
+- Early countersteering settled to tip ratio 0.122 after the test window. Countersteering delayed until tip ratio 0.60 still failed and toppled. Do not report unrestricted recovery or a complete playability pass.
+- Console retains one earlier smoke-menu error from requesting verification during an unfinished Play transition. The subsequent stable Edit-mode test completed; this is a stale coordination error, not a current compile error. Stop returns before the native transition finishes, so state must be rechecked before rebuilds.
+- Incremental Web build is running. The earlier Web build with missing clothing remains rejected and must not be packaged. Independent keyboard browser tests, music activation and looping, focus, resizing, frame time and verified ZIP are still required.

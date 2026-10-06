@@ -12,7 +12,7 @@ namespace DeliveryDash.Editor
     {
         const string AssetRoot = "Assets/DeliveryDash/Art/Cart";
 
-        public static GameObject Build(Transform parent)
+        public static GameObject Build(Transform parent, bool openRear = false)
         {
             if (!AssetDatabase.IsValidFolder(AssetRoot))
                 AssetDatabase.CreateFolder("Assets/DeliveryDash/Art", "Cart");
@@ -49,9 +49,10 @@ namespace DeliveryDash.Editor
 
             // The wire panels have deliberate negative space so the seated courier
             // remains visible. Cross rails make the silhouette hold up at 720p.
-            for (int i = 1; i <= 12; i++)
+            int sideBars = openRear ? 6 : 12;
+            for (int i = 1; i <= sideBars; i++)
             {
-                float t = i / 13f;
+                float t = i / (float)(sideBars + 1);
                 wire.Path(0.0095f, Vector3.Lerp(rearFloorL, frontFloorL, t),
                     Vector3.Lerp(rearTopL, frontTopL, t));
                 wire.Path(0.0095f, Vector3.Lerp(rearFloorR, frontFloorR, t),
@@ -61,8 +62,9 @@ namespace DeliveryDash.Editor
             for (int i = 1; i <= 10; i++)
             {
                 float t = i / 11f;
-                wire.Path(0.0095f, Vector3.Lerp(rearFloorL, rearFloorR, t),
-                    Vector3.Lerp(rearTopL, rearTopR, t));
+                if (!openRear || i == 3 || i == 8)
+                    wire.Path(0.0095f, Vector3.Lerp(rearFloorL, rearFloorR, t),
+                        Vector3.Lerp(rearTopL, rearTopR, t));
                 wire.Path(0.0095f, Vector3.Lerp(frontFloorL, frontFloorR, t),
                     Vector3.Lerp(frontTopL, frontTopR, t));
             }
@@ -73,7 +75,8 @@ namespace DeliveryDash.Editor
                 Vector3 l1 = Vector3.Lerp(frontFloorL, frontTopL, height);
                 Vector3 r0 = Vector3.Lerp(rearFloorR, rearTopR, height);
                 Vector3 r1 = Vector3.Lerp(frontFloorR, frontTopR, height);
-                wire.Path(0.011f, l0, l1, r1, r0, l0);
+                wire.Path(0.011f, l0, l1, r1, r0);
+                if (!openRear) wire.Path(0.011f, r0, l0);
             }
 
             // Open lattice below the rider, with two heavier transverse supports.
