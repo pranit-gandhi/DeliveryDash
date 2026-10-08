@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/cover.png" alt="Delivery Dash promotional artwork" width="700">
+  <img src="docs/images/cover.png" alt="Delivery Dash cover art" width="700">
 </p>
 
 # Delivery Dash
@@ -50,4 +50,4 @@ Generation uses bounded attempts, geometry checks, and a fallback course. These 
 
 Developed by **Pranit Singh Gandhi**.
 
-Asset-source notes are included alongside the relevant art, music, and third-party assets. Promotional artwork is shown above; the gallery contains in-game screenshots.
+Asset-source notes are included alongside the relevant art, music, and third-party assets. The cover art is shown above; the gallery contains in-game screenshots.
